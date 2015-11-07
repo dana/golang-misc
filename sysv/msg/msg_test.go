@@ -64,26 +64,6 @@ func TestNonBlockingReceive(t *testing.T) {
 	}
 }
 
-func TestMSGNOERR(t *testing.T) {
-	msgSetup(t)
-	defer msgTeardown(t)
-
-	if err := q.Send(3, []byte("this message is pretty long"), nil); err != nil {
-		t.Fatal(err)
-	}
-
-	msg, mtyp, err := q.Receive(22, -99, &MQRecvFlags{Truncate: true})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if mtyp != 3 {
-		t.Error("wrong type?")
-	}
-	if string(msg) != "this message is pretty" {
-		t.Errorf("not properly truncated. '%s'", string(msg))
-	}
-}
-
 func TestMSGSet(t *testing.T) {
 	msgSetup(t)
 	defer msgTeardown(t)
