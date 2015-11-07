@@ -67,6 +67,9 @@ func parseTransitFile(filePath string) (transitInfo, error) {
 	for scanner.Scan() {
 		fmt.Println(scanner.Text())
 	}
+	if err := scanner.Err(); err != nil {
+		return info, err
+	}
 	return info, err
 }
 
