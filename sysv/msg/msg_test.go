@@ -4,6 +4,7 @@ import (
 	"testing"
 	"fmt"
 	"os"
+	"bufio"
 )
 
 func TestSendRcv(t *testing.T) {
@@ -61,6 +62,11 @@ func parseTransitFile(filePath string) (transitInfo, error) {
 			panic(err)
 		}
 	}()
+	
+	scanner := bufio.NewScanner(fi)
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
+	}
 	return info, err
 }
 
