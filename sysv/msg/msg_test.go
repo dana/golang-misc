@@ -7,7 +7,10 @@ import (
 )
 
 func TestSendRcv(t *testing.T) {
-	mq, _ := msgSetup("foo")
+	mq, setupErr := msgSetup("foo")
+	if setupErr != nil {
+		t.Error(setupErr)
+	}
 
 	err := RawSend([]byte("test message body"), mq)
 	if err != nil {
@@ -46,6 +49,9 @@ type transitInfo struct {
 func parseTransitFile(filePath string) (transitInfo, error) {
 	info := transitInfo{17039435, "foo"}
 	fi, err := os.Open(filePath)
+	if err != nil {
+		return info, err
+	}
 	defer func() {
 		if err := fi.Close(); err != nil {
 			panic(err)
@@ -59,7 +65,6 @@ func msgSetup(qname string) (MessageQueue, error) {
 	if err != nil {
 		return MessageQueue(0), err
 	}
-//	mq, err := GetMsgQueue(17039435, &MQFlags{
 	mq, err := GetMsgQueue(info.qid, &MQFlags{
 		Create:    true,
 //		Create:    false,
