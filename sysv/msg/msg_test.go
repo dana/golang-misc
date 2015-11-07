@@ -1,7 +1,6 @@
 package sysvipc
 
 import (
-	//"syscall"
 	"testing"
 	"fmt"
 )
@@ -34,42 +33,6 @@ func RawReceive(queue MessageQueue) ([]byte, error) {
 	
 	return msg, err
 }
-//func TestNonBlockingSend(t *testing.T) {
-//	msgSetup(t)
-//	defer msgTeardown(t)
-//
-//	info, err := q.Stat()
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//
-//	err = q.Set(&MQInfo{
-//		Perms: IpcPerms{
-//			OwnerUID: info.Perms.OwnerUID,
-//			OwnerGID: info.Perms.OwnerGID,
-//			Mode:     info.Perms.Mode,
-//		},
-//		MaxBytes: 8,
-//	})
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//
-//	if err := q.Send(3, []byte("more than 8"), &MQSendFlags{DontWait: true}); err != syscall.EAGAIN {
-//		t.Error("too-long write should have failed", err)
-//	}
-//}
-//
-//func TestNonBlockingReceive(t *testing.T) {
-//	msgSetup(t)
-//	defer msgTeardown(t)
-//
-//	_, _, err := q.Receive(64, -99, &MQRecvFlags{DontWait: true})
-//	if err != syscall.EAGAIN && err != syscall.ENOMSG {
-//		t.Error("non-blocking read against empty queue should fail", err)
-//	}
-//}
-//
 
 func msgSetup(t *testing.T) (MessageQueue, error) {
 	mq, err := GetMsgQueue(17039435, &MQFlags{
@@ -84,11 +47,3 @@ func msgSetup(t *testing.T) (MessageQueue, error) {
 	}
 	return mq, err
 }
-
-//func msgTeardown(t *testing.T) {
-//	return
-//	fmt.Println(t)
-//	if err := q.Remove(); err != nil {
-//		t.Fatal(err)
-//	}
-//}
