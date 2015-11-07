@@ -64,38 +64,6 @@ func TestNonBlockingReceive(t *testing.T) {
 	}
 }
 
-func TestMSGSet(t *testing.T) {
-	msgSetup(t)
-	defer msgTeardown(t)
-
-	info, err := q.Stat()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	mqi := &MQInfo{
-		Perms: IpcPerms{
-			OwnerUID: info.Perms.OwnerUID,
-			OwnerGID: info.Perms.OwnerGID,
-			Mode:     0644,
-		},
-	}
-
-	err = q.Set(mqi)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	info, err = q.Stat()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if info.Perms.Mode != 0644 {
-		t.Error("perms change didn't take")
-	}
-}
-
 var q MessageQueue
 
 func msgSetup(t *testing.T) {
