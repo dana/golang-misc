@@ -30,7 +30,7 @@ func TestSendRcv(t *testing.T) {
 	}
 
 	if string(msg) != "test message body" {
-		t.Errorf("%q", string(msg))
+		t.Error(string(msg))
 		return
 	}
 }
