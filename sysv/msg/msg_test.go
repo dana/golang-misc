@@ -8,24 +8,17 @@ import (
 
 func TestSendRcv(t *testing.T) {
 	mq, _ := msgSetup(t)
-//	defer msgTeardown(t)
 
-	fmt.Println("Before Send");
-//	q.Send(1, []byte("test message body"), nil)
 	err := RawSend([]byte("test message body"), mq)
 	if err != nil {
 		t.Error(err)
 	}
 	
-	fmt.Println("Before Receive");
-//	msg, mtyp, err := q.Receive(64, -10, nil)
 	msg,err := RawReceive(mq)
 	if err != nil {
 		t.Error(err)
 	}
 
-//	if string(msg) != "test message body" || mtyp != 1 {
-//		t.Errorf("%q %v", string(msg), mtyp)
 	if string(msg) != "test message body" {
 		t.Errorf("%q", string(msg))
 	}
