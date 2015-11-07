@@ -8,9 +8,10 @@ import (
 	"os"
 	"bufio"
 )
+var test_qname string = "foo"
 
 func TestSendRcv(t *testing.T) {
-	mq, setupErr := msgSetup("foo")
+	mq, setupErr := msgSetup(test_qname)
 	if setupErr != nil {
 		t.Error(setupErr)
 		return
