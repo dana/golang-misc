@@ -3,6 +3,7 @@ package sysvipc
 import (
 	"syscall"
 	"testing"
+	"fmt"
 )
 
 func TestSendRcv(t *testing.T) {
@@ -17,13 +18,13 @@ func TestSendRcv(t *testing.T) {
 	//		t.Error("msgrcv with bad msqid should fail", err)
 	//	}
 
-	q.Send(6, []byte("test message body"), nil)
-	msg, mtyp, err := q.Receive(64, -100, nil)
+	q.Send(7, []byte("test message body"), nil)
+	msg, mtyp, err := q.Receive(64, -10, nil)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if string(msg) != "test message body" || mtyp != 6 {
+	if string(msg) != "test message body" || mtyp != 7 {
 		t.Errorf("%q %v", string(msg), mtyp)
 	}
 }
@@ -67,6 +68,8 @@ func TestNonBlockingReceive(t *testing.T) {
 var q MessageQueue
 
 func msgSetup(t *testing.T) {
+	foo, _ := Ftok("/tmp",10)
+	fmt.Println(foo)
 	mq, err := GetMsgQueue(0xDA7ABA5E, &MQFlags{
 		Create:    true,
 		Exclusive: true,
