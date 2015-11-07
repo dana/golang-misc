@@ -6,7 +6,7 @@ import (
 )
 
 func TestSendRcv(t *testing.T) {
-	mq, _ := msgSetup(t)
+	mq, _ := msgSetup("foo")
 
 	err := RawSend([]byte("test message body"), mq)
 	if err != nil {
@@ -34,7 +34,11 @@ func RawReceive(queue MessageQueue) ([]byte, error) {
 	return msg, err
 }
 
-func msgSetup(t *testing.T) (MessageQueue, error) {
+//  $ cat /tmp/ipc_transit/foo 
+//  qid=17039435
+//  qname=foo
+
+func msgSetup(qname string) (MessageQueue, error) {
 	mq, err := GetMsgQueue(17039435, &MQFlags{
 		Create:    true,
 //		Create:    false,
