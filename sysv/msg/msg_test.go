@@ -12,7 +12,11 @@ func TestSendRcv(t *testing.T) {
 
 	fmt.Println("Before Send");
 //	q.Send(1, []byte("test message body"), nil)
-	RawSend([]byte("test message body"), q)
+	err := RawSend([]byte("test message body"), q)
+	if err != nil {
+		t.Error(err)
+	}
+	
 	fmt.Println("Before Receive");
 //	msg, mtyp, err := q.Receive(64, -10, nil)
 	msg,err := RawReceive(q)
@@ -27,15 +31,13 @@ func TestSendRcv(t *testing.T) {
 	}
 }
 
-func RawSend(rawBytes []byte, queue MessageQueue) {
-	queue.Send(1, rawBytes, nil)
+func RawSend(rawBytes []byte, queue MessageQueue) (error) {
+	err := queue.Send(1, rawBytes, nil)
+	return err
 }
 
 func RawReceive(queue MessageQueue) ([]byte, error) {
-	msg, _, err := queue.Receive(64, -10, nil)
-//	if err != nil {
-//		t.Error(err)
-//	}
+	msg, _, err := queue.Receive(102400000, -1, nil)
 	
 	return msg, err
 }
