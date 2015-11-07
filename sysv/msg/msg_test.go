@@ -15,10 +15,10 @@ func TestSendRcv(t *testing.T) {
 	RawSend([]byte("test message body"), q)
 	fmt.Println("Before Receive");
 //	msg, mtyp, err := q.Receive(64, -10, nil)
-//	if err != nil {
-//		t.Error(err)
-//	}
-	msg := RawReceive(q)
+	msg,err := RawReceive(q)
+	if err != nil {
+		t.Error(err)
+	}
 
 //	if string(msg) != "test message body" || mtyp != 1 {
 //		t.Errorf("%q %v", string(msg), mtyp)
@@ -31,13 +31,13 @@ func RawSend(rawBytes []byte, queue MessageQueue) {
 	queue.Send(1, rawBytes, nil)
 }
 
-func RawReceive(queue MessageQueue) ([]byte) {
-	msg, _, _ := queue.Receive(64, -10, nil)
+func RawReceive(queue MessageQueue) ([]byte, error) {
+	msg, _, err := queue.Receive(64, -10, nil)
 //	if err != nil {
 //		t.Error(err)
 //	}
 	
-	return msg
+	return msg, err
 }
 //func TestNonBlockingSend(t *testing.T) {
 //	msgSetup(t)
