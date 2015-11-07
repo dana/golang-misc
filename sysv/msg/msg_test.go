@@ -75,7 +75,7 @@ func msgSetup(t *testing.T) {
 	mq, err := GetMsgQueue(17039435, &MQFlags{
 		Create:    true,
 //		Create:    false,
-		Exclusive: true,
+//		Exclusive: true,
 //		Exclusive: false,
 		Perms:     0600,
 	})
