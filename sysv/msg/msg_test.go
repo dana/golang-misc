@@ -68,20 +68,25 @@ func TestNonBlockingReceive(t *testing.T) {
 var q MessageQueue
 
 func msgSetup(t *testing.T) {
-	foo, _ := Ftok("/tmp",10)
-	fmt.Println(foo)
-	mq, err := GetMsgQueue(0xDA7ABA5E, &MQFlags{
+	//foo, _ := Ftok("/tmp",10)
+	//fmt.Println(foo)
+//	mq, err := GetMsgQueue(0xDA7ABA5E, &MQFlags{
+	mq, err := GetMsgQueue(17039435, &MQFlags{
 		Create:    true,
-		Exclusive: true,
+//		Exclusive: true,
+		Exclusive: false,
 		Perms:     0600,
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
+//	mq := MessageQueue(17039435)
+	fmt.Println(mq)
 	q = mq
 }
 
 func msgTeardown(t *testing.T) {
+	return
 	if err := q.Remove(); err != nil {
 		t.Fatal(err)
 	}
