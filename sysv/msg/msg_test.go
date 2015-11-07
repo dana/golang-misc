@@ -7,19 +7,19 @@ import (
 )
 
 func TestSendRcv(t *testing.T) {
-	msgSetup(t)
+	mq, _ := msgSetup(t)
 //	defer msgTeardown(t)
 
 	fmt.Println("Before Send");
 //	q.Send(1, []byte("test message body"), nil)
-	err := RawSend([]byte("test message body"), q)
+	err := RawSend([]byte("test message body"), mq)
 	if err != nil {
 		t.Error(err)
 	}
 	
 	fmt.Println("Before Receive");
 //	msg, mtyp, err := q.Receive(64, -10, nil)
-	msg,err := RawReceive(q)
+	msg,err := RawReceive(mq)
 	if err != nil {
 		t.Error(err)
 	}
@@ -77,11 +77,8 @@ func RawReceive(queue MessageQueue) ([]byte, error) {
 //	}
 //}
 //
-var q MessageQueue
 
-func msgSetup(t *testing.T) {
-	fmt.Println("one")
-//	mq, err := GetMsgQueue(0xDA7ABA5E, &MQFlags{
+func msgSetup(t *testing.T) (MessageQueue, error) {
 	mq, err := GetMsgQueue(17039435, &MQFlags{
 		Create:    true,
 //		Create:    false,
@@ -89,11 +86,10 @@ func msgSetup(t *testing.T) {
 //		Exclusive: false,
 		Perms:     0600,
 	})
-	fmt.Println("two");
-	if err != nil {
-		t.Fatal(err)
+	if false {
+		fmt.Println("two");
 	}
-	q = mq
+	return mq, err
 }
 
 //func msgTeardown(t *testing.T) {
