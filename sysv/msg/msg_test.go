@@ -1,7 +1,9 @@
 package sysvipc
 
 import (
+	"strconv"
 	"testing"
+	"strings"
 	"fmt"
 	"os"
 	"bufio"
@@ -52,7 +54,8 @@ type transitInfo struct {
 }
 
 func parseTransitFile(filePath string) (transitInfo, error) {
-	info := transitInfo{17039435, "foo"}
+//	info := transitInfo{17039435, "foo"}
+	info := transitInfo{0, ""}
 	fi, err := os.Open(filePath)
 	if err != nil {
 		return info, err
@@ -65,11 +68,22 @@ func parseTransitFile(filePath string) (transitInfo, error) {
 	
 	scanner := bufio.NewScanner(fi)
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
+		things := strings.Split(scanner.Text(), "=")
+		key := string(things[0])
+		value := things[1]
+		switch key {
+		case "qid":
+			my_qid, _ := strconv.Atoi(string(value))
+			info.qid = int64(my_qid)
+		case "qname":
+			info.qname = string(value)
+		}
 	}
 	if err := scanner.Err(); err != nil {
 		return info, err
 	}
+	
+	fmt.Println(info)
 	return info, err
 }
 
