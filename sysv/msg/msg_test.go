@@ -10,6 +10,20 @@ import (
 )
 var test_qname string = "foo"
 
+func Send(rawBytes []byte, qname string) (error) {
+	mq, err := msgSetup(qname)
+	if err != nil {
+		return err
+	}
+	sendErr := RawSend(rawBytes, mq);
+	return sendErr
+}
+
+func RawSend(rawBytes []byte, queue MessageQueue) (error) {
+	err := queue.Send(1, rawBytes, nil)
+	return err
+}
+
 func TestSendRcv(t *testing.T) {
 	mq, setupErr := msgSetup(test_qname)
 	if setupErr != nil {
@@ -33,11 +47,6 @@ func TestSendRcv(t *testing.T) {
 		t.Error(string(msg))
 		return
 	}
-}
-
-func RawSend(rawBytes []byte, queue MessageQueue) (error) {
-	err := queue.Send(1, rawBytes, nil)
-	return err
 }
 
 func RawReceive(queue MessageQueue) ([]byte, error) {
