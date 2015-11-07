@@ -1,16 +1,9 @@
 package sysvipc
 
 import (
-	"os"
 	"syscall"
 	"testing"
 )
-
-func TestMSGBadGet(t *testing.T) {
-	if _, err := GetMsgQueue(0xDA7ABA5E, nil); err != syscall.ENOENT {
-		t.Error("GetMsgQueue on a non-existent queue without CREAT should fail")
-	}
-}
 
 func TestSendRcv(t *testing.T) {
 	msgSetup(t)
@@ -91,43 +84,6 @@ func TestMSGNOERR(t *testing.T) {
 	}
 }
 
-func TestMSGStats(t *testing.T) {
-	msgSetup(t)
-	defer msgTeardown(t)
-
-	msg := "this is a message in a test"
-
-	info, err := q.Stat()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if info.Perms.Mode != 0600 {
-		t.Error("wrong permissions?")
-	}
-	if info.Perms.OwnerUID != os.Getuid() {
-		t.Error("wrong owner?")
-	}
-	if info.Perms.CreatorUID != os.Getuid() {
-		t.Error("wrong creator?")
-	}
-	if info.MsgCount != 0 {
-		t.Error("phantom messages?")
-	}
-
-	q.Send(4, []byte(msg), nil)
-
-	info, err = q.Stat()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if info.MsgCount != 1 {
-		t.Error("missing message?")
-	}
-	if info.LastSender != os.Getpid() {
-		t.Error("wrong last sender?")
-	}
-}
-
 func TestMSGSet(t *testing.T) {
 	msgSetup(t)
 	defer msgTeardown(t)
@@ -158,26 +114,6 @@ func TestMSGSet(t *testing.T) {
 	if info.Perms.Mode != 0644 {
 		t.Error("perms change didn't take")
 	}
-}
-
-func TestRemove(t *testing.T) {
-	msgSetup(t)
-	defer msgTeardown(t)
-
-	if err := MessageQueue(5).Remove(); err != syscall.EINVAL {
-		t.Error("remove on a bad mqid should fail", err)
-	}
-
-	if err := q.Remove(); err != nil {
-		t.Fatal(err)
-	}
-
-	if _, err := q.Stat(); err != syscall.EINVAL {
-		t.Fatal("stat on a removed queue should fail with EINVAL")
-	}
-
-	// so the msgTeardown doesn't fail
-	msgSetup(t)
 }
 
 var q MessageQueue
