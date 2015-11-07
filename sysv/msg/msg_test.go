@@ -25,19 +25,20 @@ func RawSend(rawBytes []byte, queue MessageQueue) (error) {
 }
 
 func TestSendRcv(t *testing.T) {
-	mq, setupErr := msgSetup(test_qname)
-	if setupErr != nil {
-		t.Error(setupErr)
-		return
-	}
+//	mq, setupErr := msgSetup(test_qname)
+//	if setupErr != nil {
+//		t.Error(setupErr)
+//		return
+//	}
 
-	err := RawSend([]byte("test message body"), mq)
+//	err := RawSend([]byte("test message body"), mq)
+	err := Send([]byte("test message body"), test_qname)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 	
-	msg,err := RawReceive(mq)
+	msg,err := Receive(test_qname)
 	if err != nil {
 		t.Error(err)
 		return
@@ -49,6 +50,14 @@ func TestSendRcv(t *testing.T) {
 	}
 }
 
+func Receive(qname string) ([]byte, error) {
+	mq, err := msgSetup(qname)
+	if err != nil {
+		return []byte(""), err
+	}
+	msg, receiveErr := RawReceive(mq);
+	return msg, receiveErr
+}
 func RawReceive(queue MessageQueue) ([]byte, error) {
 	msg, _, err := queue.Receive(102400000, -1, nil)
 	
