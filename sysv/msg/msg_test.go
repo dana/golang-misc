@@ -3,6 +3,7 @@ package sysvipc
 import (
 	"testing"
 	"fmt"
+	"os"
 )
 
 func TestSendRcv(t *testing.T) {
@@ -37,6 +38,21 @@ func RawReceive(queue MessageQueue) ([]byte, error) {
 //  $ cat /tmp/ipc_transit/foo 
 //  qid=17039435
 //  qname=foo
+type transitInfo struct {
+	qid int64
+	qname string
+}
+
+func parseTransitFile(filePath string) (transitInfo, error) {
+	info := transitInfo{17039435, "foo"}
+	fi, err := os.Open("foo.txt")
+	defer func() {
+		if err := fi.Close(); err != nil {
+			panic(err)
+		}
+	}()
+	return info, err
+}
 
 func msgSetup(qname string) (MessageQueue, error) {
 	mq, err := GetMsgQueue(17039435, &MQFlags{
