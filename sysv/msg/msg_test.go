@@ -45,7 +45,7 @@ type transitInfo struct {
 
 func parseTransitFile(filePath string) (transitInfo, error) {
 	info := transitInfo{17039435, "foo"}
-	fi, err := os.Open("foo.txt")
+	fi, err := os.Open(filePath)
 	defer func() {
 		if err := fi.Close(); err != nil {
 			panic(err)
@@ -55,7 +55,12 @@ func parseTransitFile(filePath string) (transitInfo, error) {
 }
 
 func msgSetup(qname string) (MessageQueue, error) {
-	mq, err := GetMsgQueue(17039435, &MQFlags{
+	info, err := parseTransitFile("/tmp/ipc_transit/" + qname)
+	if err != nil {
+		return MessageQueue(0), err
+	}
+//	mq, err := GetMsgQueue(17039435, &MQFlags{
+	mq, err := GetMsgQueue(info.qid, &MQFlags{
 		Create:    true,
 //		Create:    false,
 //		Exclusive: true,
