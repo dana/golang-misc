@@ -10,20 +10,24 @@ func TestSendRcv(t *testing.T) {
 	mq, setupErr := msgSetup("foo")
 	if setupErr != nil {
 		t.Error(setupErr)
+		return
 	}
 
 	err := RawSend([]byte("test message body"), mq)
 	if err != nil {
 		t.Error(err)
+		return
 	}
 	
 	msg,err := RawReceive(mq)
 	if err != nil {
 		t.Error(err)
+		return
 	}
 
 	if string(msg) != "test message body" {
 		t.Errorf("%q", string(msg))
+		return
 	}
 }
 
