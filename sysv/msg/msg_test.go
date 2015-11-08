@@ -133,7 +133,10 @@ func parseTransitFile(filePath string) (transitInfo, error) {
 		value := things[1]
 		switch key {
 		case "qid":
-			my_qid, _ := strconv.Atoi(string(value))
+			my_qid, atoiErr := strconv.Atoi(string(value))
+			if atoiErr != nil {
+				return info, atoiErr
+			}
 			info.qid = int64(my_qid)
 		case "qname":
 			info.qname = string(value)
