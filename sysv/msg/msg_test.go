@@ -29,7 +29,7 @@ func TestSendRcv(t *testing.T) {
 	defer func() {
 		os.Remove("/tmp/ipc_transit/" + test_qname)
 	}()
-	err := Send([]byte("test message body"), test_qname)
+	err := Send([]byte(`{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia"]}`), test_qname)
 	if err != nil {
 		t.Error(err)
 		return
@@ -40,7 +40,7 @@ func TestSendRcv(t *testing.T) {
 		return
 	}
 
-	if string(msg) != "test message body" {
+	if string(msg) != `{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia"]}` {
 		t.Error(string(msg))
 		return
 	}
