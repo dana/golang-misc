@@ -20,11 +20,15 @@ func main() {
 	parseWireHeader(test_input)
 }
 
-func parseWireHeader(test_input []byte) {
+func parseWireHeader(test_input []byte) (map[string]string, error) {
+	var ret = make(map[string]string)
 	test_string := string(test_input)
-//	fmt.Println("Main", test_string)
 	parts := strings.SplitN(test_string, ":", 2)
 //	fmt.Println(parts)
-	header_length,_ := strconv.Atoi(parts[0])
+	header_length,atoiErr := strconv.Atoi(parts[0])
+	if atoiErr != nil {
+		return ret, atoiErr
+	}
 	fmt.Println(header_length)
+	return ret, nil
 }
