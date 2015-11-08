@@ -1,25 +1,26 @@
 package sysvipc
 
 import (
-	"strconv"
-	"testing"
-	"strings"
+	"bufio"
 	"fmt"
 	"os"
-	"bufio"
+	"strconv"
+	"strings"
+	"testing"
 )
+
 var test_qname string = "foo"
 
-func Send(rawBytes []byte, qname string) (error) {
+func Send(rawBytes []byte, qname string) error {
 	mq, err := msgSetup(qname)
 	if err != nil {
 		return err
 	}
-	sendErr := RawSend(rawBytes, mq);
+	sendErr := RawSend(rawBytes, mq)
 	return sendErr
 }
 
-func RawSend(rawBytes []byte, queue MessageQueue) (error) {
+func RawSend(rawBytes []byte, queue MessageQueue) error {
 	err := queue.Send(1, rawBytes, nil)
 	return err
 }
@@ -30,8 +31,7 @@ func TestSendRcv(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	
-	msg,err := Receive(test_qname)
+	msg, err := Receive(test_qname)
 	if err != nil {
 		t.Error(err)
 		return
@@ -48,25 +48,24 @@ func Receive(qname string) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
-	msg, receiveErr := RawReceive(mq);
+	msg, receiveErr := RawReceive(mq)
 	return msg, receiveErr
 }
 func RawReceive(queue MessageQueue) ([]byte, error) {
 	msg, _, err := queue.Receive(102400000, -1, nil)
-	
 	return msg, err
 }
 
-//  $ cat /tmp/ipc_transit/foo 
+//  $ cat /tmp/ipc_transit/foo
 //  qid=17039435
 //  qname=foo
 type transitInfo struct {
-	qid int64
+	qid   int64
 	qname string
 }
 
 func parseTransitFile(filePath string) (transitInfo, error) {
-//	info := transitInfo{17039435, "foo"}
+	//	info := transitInfo{17039435, "foo"}
 	info := transitInfo{0, ""}
 	fi, err := os.Open(filePath)
 	if err != nil {
@@ -77,7 +76,6 @@ func parseTransitFile(filePath string) (transitInfo, error) {
 			panic(err)
 		}
 	}()
-	
 	scanner := bufio.NewScanner(fi)
 	for scanner.Scan() {
 		things := strings.Split(scanner.Text(), "=")
@@ -94,7 +92,6 @@ func parseTransitFile(filePath string) (transitInfo, error) {
 	if err := scanner.Err(); err != nil {
 		return info, err
 	}
-	
 	return info, err
 }
 
@@ -104,14 +101,14 @@ func msgSetup(qname string) (MessageQueue, error) {
 		return MessageQueue(0), err
 	}
 	mq, err := GetMsgQueue(info.qid, &MQFlags{
-		Create:    true,
-//		Create:    false,
-//		Exclusive: true,
-//		Exclusive: false,
-		Perms:     0600,
+		Create: true,
+		//		Create:    false,
+		//		Exclusive: true,
+		//		Exclusive: false,
+		Perms: 0600,
 	})
 	if false {
-		fmt.Println("two");
+		fmt.Println("two")
 	}
 	return mq, err
 }
