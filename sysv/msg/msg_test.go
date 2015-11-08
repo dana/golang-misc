@@ -51,8 +51,8 @@ func Receive(qname string) ([]byte, error) {
 	if err != nil {
 		return []byte(""), err
 	}
-	msg, receiveErr := RawReceive(mq)
-	return msg, receiveErr
+	rawBytes, receiveErr := RawReceive(mq)
+	return rawBytes, receiveErr
 }
 func RawReceive(queue MessageQueue) ([]byte, error) {
 	msg, _, err := queue.Receive(102400000, -1, nil)
