@@ -31,7 +31,25 @@ func TestSendRcv(t *testing.T) {
 	defer func() {
 		os.Remove("/tmp/ipc_transit/" + test_qname)
 	}()
-	err := Send([]byte(`{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia","Foo"]}`), test_qname)
+
+	sendMessage := map[string]interface{}{
+		"Name": "Wednesday",
+		"Age": 6,
+		"Parents": map[string]interface{}{
+			"bee": "boo",
+			"foo": map[string]interface{}{
+				"hi": []string{"a","b"},
+			},
+		},
+	}
+	jsonBytes, marshalErr := json.Marshal(sendMessage)
+	if marshalErr != nil {
+		t.Error(marshalErr)
+		return
+	}
+
+//	err := Send([]byte(`{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia","Foo"]}`), test_qname)
+	err := Send(jsonBytes, test_qname)
 	if err != nil {
 		t.Error(err)
 		return
