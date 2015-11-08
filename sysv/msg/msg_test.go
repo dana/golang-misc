@@ -89,22 +89,22 @@ func TestSendRcv(t *testing.T) {
 }
 
 func Receive(qname string) (interface{}, error) {
+	var f interface{}
 	mq, err := getQueue(qname)
 	if err != nil {
-		return []byte(""), err
+		return f, err
 	}
 	rawBytes, receiveErr := RawReceive(mq)
-	var f interface{}
 	jsonErr := json.Unmarshal(rawBytes, &f)
 	if jsonErr != nil {
-		return rawBytes, jsonErr
+		return f, jsonErr
 	}
 
 	return f, receiveErr
 }
 func RawReceive(queue MessageQueue) ([]byte, error) {
-	msg, _, err := queue.Receive(102400000, -1, nil)
-	return msg, err
+	rawBytes, _, err := queue.Receive(102400000, -1, nil)
+	return rawBytes, err
 }
 
 //  $ cat /tmp/ipc_transit/foo
