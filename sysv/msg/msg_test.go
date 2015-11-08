@@ -32,6 +32,8 @@ func TestSendRcv(t *testing.T) {
 		os.Remove("/tmp/ipc_transit/" + test_qname)
 	}()
 
+// How to create this message: http://play.golang.org/p/13OSJHd5xe
+// Info about seemingly fully dynamic marshal/unmarshal: http://stackoverflow.com/questions/19482612/go-golang-array-type-inside-struct-missing-type-composite-literal
 	sendMessage := map[string]interface{}{
 		"Name": "Wednesday",
 		"Age": 6,
