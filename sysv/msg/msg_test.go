@@ -204,3 +204,12 @@ queue stats
 internal(local) queues
 testing with alternate directories
 */
+
+/*
+Sun Nov  8 12:24:56 PST 2015
+
+Full example of message including header
+
+11:d=localhost{".ipc_transit_meta":{"destination":"localhost","ttl":9,"destination_qname":"test","send_ts":1447014248},"1":2}
+*/
+
