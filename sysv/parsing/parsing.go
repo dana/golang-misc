@@ -19,6 +19,12 @@ func TestParse(t *testing.T) {
 func main() {
 	wireHeader, _ := parseWireHeader(testInput)
 	fmt.Println(wireHeader)
+	
+}
+
+func createWireHeader(map[string]string) ([]byte, error) {
+	ret := []byte("19:d=localhost")
+	return ret, nil
 }
 
 func parseWireHeader(testInput []byte) (map[string]string, error) {
