@@ -94,8 +94,28 @@ func parseTransitFile(filePath string) (transitInfo, error) {
 	return info, err
 }
 
+func makeNewQueue(qname string, queuePath string) error {
+	fi, err := os.Create(queuePath)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := fi.Close(); err != nil {
+			panic(err)
+		}
+	}()
+	return err
+}
+
 func getQueue(qname string) (MessageQueue, error) {
-	info, err := parseTransitFile("/tmp/ipc_transit/" + qname)
+	transitInfoFilePath := "/tmp/ipc_transit/" + qname
+	if _, statErr := os.Stat(transitInfoFilePath); os.IsNotExist(statErr) {
+		makeErr := makeNewQueue(qname, transitInfoFilePath)
+		if makeErr != nil {
+			panic(makeErr)
+		}
+	}
+	info, err := parseTransitFile(transitInfoFilePath)
 	if err != nil {
 		return MessageQueue(0), err
 	}
