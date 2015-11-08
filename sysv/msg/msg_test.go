@@ -188,3 +188,18 @@ func getQueue(qname string) (MessageQueue, error) {
 	}
 	return mq, err
 }
+
+
+/*
+Sat Nov  7 18:09:43 PST 2015
+TODO:
+Locking around the IPC Transit file manipulation
+Nonblocking flags
+Handle (and respect) the custom IPC::Transit header
+Obviously turn this into a proper package
+Large message handling
+Remote transit
+queue stats
+internal(local) queues
+testing with alternate directories
+*/
