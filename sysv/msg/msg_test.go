@@ -12,7 +12,7 @@ import (
 var test_qname string = "foo"
 
 func Send(rawBytes []byte, qname string) error {
-	mq, err := msgSetup(qname)
+	mq, err := getQueue(qname)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func TestSendRcv(t *testing.T) {
 }
 
 func Receive(qname string) ([]byte, error) {
-	mq, err := msgSetup(qname)
+	mq, err := getQueue(qname)
 	if err != nil {
 		return []byte(""), err
 	}
@@ -65,7 +65,6 @@ type transitInfo struct {
 }
 
 func parseTransitFile(filePath string) (transitInfo, error) {
-	//	info := transitInfo{17039435, "foo"}
 	info := transitInfo{0, ""}
 	fi, err := os.Open(filePath)
 	if err != nil {
@@ -95,7 +94,7 @@ func parseTransitFile(filePath string) (transitInfo, error) {
 	return info, err
 }
 
-func msgSetup(qname string) (MessageQueue, error) {
+func getQueue(qname string) (MessageQueue, error) {
 	info, err := parseTransitFile("/tmp/ipc_transit/" + qname)
 	if err != nil {
 		return MessageQueue(0), err
