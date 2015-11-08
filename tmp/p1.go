@@ -11,7 +11,32 @@ func main() {
 //ref:  http://michaelheap.com/golang-encodedecode-arbitrary-json/  18/8/15
 
     // Using some hand crafted JSON. This could come from a file, web service, anything
-    str2 := "{\"foo\":{\"baz\": [1,2,3]}, \"flag\":true, \"list\":[\"one\", 2, true, \"4\", {\"key\":\"value\"}, [1, true]]}"
+//    str2 := "{\"foo\":{\"baz\": [1,2,3]}, \"flag\":true, \"list\":[\"one\", 2, true, \"4\", {\"key\":\"value\"}, [1, true]]}"
+/*
+    str2 := `
+{	"foo": {
+		"baz": [1,2,3]
+	},
+	"flag":true,
+	"list":[
+		"one",
+		2,
+		true,
+		"4",
+		{"key":"value"},
+		[1, true]
+	]
+}`
+*/
+	str2 := `
+{	"Name":"Wednesday",
+	"Age":6,
+	"Parents":[
+		"Gomez",
+		"Morticia",
+		{	"Foo": "there" }
+	]
+}`
 
     var y map[string]interface{}
     json.Unmarshal([]byte(str2), &y)
@@ -25,7 +50,8 @@ each key is before we can perform operations on it. Go provides a the "reflect"
 package which we can use to process arbitrarily complex data structures:
 */
 
-    the_list := y["list"].([]interface{})
+//    the_list := y["Parents"].([]interface{})
+    the_list := y["Parents"].([]interface{})
     for n, v := range the_list {
         fmt.Printf("index:%d  value:%v  kind:%s  type:%s\n", n, v, reflect.TypeOf(v).Kind(), reflect.TypeOf(v))
     }
