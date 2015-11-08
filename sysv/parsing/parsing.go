@@ -24,11 +24,11 @@ func parseWireHeader(test_input []byte) (map[string]string, error) {
 	var ret = make(map[string]string)
 	test_string := string(test_input)
 	parts := strings.SplitN(test_string, ":", 2)
-//	fmt.Println(parts)
 	header_length,atoiErr := strconv.Atoi(parts[0])
 	if atoiErr != nil {
 		return ret, atoiErr
 	}
-	fmt.Println(header_length)
+	header_string := parts[1][0:header_length]
+	fmt.Println(header_string)
 	return ret, nil
 }
