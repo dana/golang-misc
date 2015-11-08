@@ -26,6 +26,9 @@ func RawSend(rawBytes []byte, queue MessageQueue) error {
 }
 
 func TestSendRcv(t *testing.T) {
+	defer func() {
+		os.Remove("/tmp/ipc_transit/" + test_qname)
+	}()
 	err := Send([]byte("test message body"), test_qname)
 	if err != nil {
 		t.Error(err)
@@ -95,6 +98,7 @@ func parseTransitFile(filePath string) (transitInfo, error) {
 }
 
 func makeNewQueue(qname string, queuePath string) error {
+	fmt.Println("makeNewQueue: " + qname)
 	fi, err := os.Create(queuePath)
 	if err != nil {
 		return err
@@ -105,8 +109,9 @@ func makeNewQueue(qname string, queuePath string) error {
 		}
 	}()
 	fi.WriteString("qname=" + qname + "\n")
-//	key, ftokErr := Ftok(
-	return err
+	key, ftokErr := Ftok(queuePath, 100)
+	fi.WriteString("qid=" + strconv.Itoa(int(key)))
+	return ftokErr
 }
 
 func getQueue(qname string) (MessageQueue, error) {
