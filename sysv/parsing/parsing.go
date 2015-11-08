@@ -34,7 +34,9 @@ func createWireHeader(headerMap map[string]string) ([]byte, error) {
 		headerBytes = append(headerBytes, value...)
 		headerBytes = append(headerBytes, ","...)
 	}
-	headerBytes = headerBytes[:len(headerBytes)-1]
+	if len(headerBytes) > 0 {
+		headerBytes = headerBytes[:len(headerBytes)-1]
+	}
 	ret := []byte(strconv.Itoa(len(headerBytes)))
 	ret = append(ret, ":"...)
 	ret = append(ret, headerBytes...)
