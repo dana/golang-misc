@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"encoding/json"
+	"reflect"
 	"strconv"
 	"strings"
 	"testing"
@@ -30,7 +31,7 @@ func TestSendRcv(t *testing.T) {
 	defer func() {
 		os.Remove("/tmp/ipc_transit/" + test_qname)
 	}()
-	err := Send([]byte(`{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia"]}`), test_qname)
+	err := Send([]byte(`{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia","Foo"]}`), test_qname)
 	if err != nil {
 		t.Error(err)
 		return
@@ -38,6 +39,7 @@ func TestSendRcv(t *testing.T) {
 	m, err := Receive(test_qname)
 	msg := m.(map[string]interface{})
 	for k, v := range msg {
+		fmt.Println(k, " -> ", reflect.TypeOf(v))
 		switch vv := v.(type) {
 		case string:
 			if k == "Name" {
@@ -59,7 +61,7 @@ func TestSendRcv(t *testing.T) {
 				fmt.Println(i, u)
 			}
 		default:
-			fmt.Println(k, "is of a type I don't know how to handle")
+			fmt.Println(k, "is of a type I don't know how to handle", vv)
 		}
 	}
 	if err != nil {
