@@ -40,8 +40,18 @@ func TestSendRcv(t *testing.T) {
 	for k, v := range msg {
 		switch vv := v.(type) {
 		case string:
+			if k == "Name" {
+				if v != "Wednesday" {
+					t.Error(err)
+				}
+			}
 			fmt.Println(k, "is string", vv)
 		case float64:
+			if k == "Age" {
+				if v != 6.0 {
+					t.Error(err)
+				}
+			}
 			fmt.Println(k, "is float64", vv)
 		case []interface{}:
 			fmt.Println(k, "is an array:")
