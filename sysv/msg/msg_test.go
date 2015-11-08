@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-var test_qname string = "foo"
+var test_qname string = "ipc-transit-test-queue"
 
 
 func Send(sendMessage map[string]interface {}, qname string) error {
