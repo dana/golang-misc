@@ -183,8 +183,9 @@ func getQueue(qname string) (MessageQueue, error) {
 		//		Exclusive: false,
 		Perms: 0666,
 	})
-	if false {
-		fmt.Println("two")
+	if false {	//this is about always having a use of fmt.Println so I never
+				//have to take it out of imports
+		fmt.Println("whatevah")
 	}
 	return mq, err
 }
