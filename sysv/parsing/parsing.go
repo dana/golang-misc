@@ -27,17 +27,17 @@ func main() {
 }
 
 func createWireHeader(headerMap map[string]string) ([]byte, error) {
-//	ret := []byte("19:d=localhost")
-	ret := []byte("")
+	headerBytes := []byte("")
 	for key, value := range headerMap {
-//		byteKey := []byte(key)
-//		byteValue := []byte(value)
-//		fmt.Println(byteKey, byteValue)
-		ret = append(ret, key...)
-		ret = append(ret, "="...)
-		ret = append(ret, value...)
-		ret = append(ret, ","...)
+		headerBytes = append(headerBytes, key...)
+		headerBytes = append(headerBytes, "="...)
+		headerBytes = append(headerBytes, value...)
+		headerBytes = append(headerBytes, ","...)
 	}
+	headerBytes = headerBytes[:len(headerBytes)-1]
+	ret := []byte(strconv.Itoa(len(headerBytes)))
+	ret = append(ret, ":"...)
+	ret = append(ret, headerBytes...)
 	return ret, nil
 }
 
