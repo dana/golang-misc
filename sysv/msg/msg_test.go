@@ -95,7 +95,6 @@ func parseTransitFile(filePath string) (transitInfo, error) {
 		return info, err
 	}
 	
-	fmt.Println(info)
 	return info, err
 }
 
