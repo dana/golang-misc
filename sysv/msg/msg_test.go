@@ -56,7 +56,11 @@ func TestSendRcv(t *testing.T) {
 		t.Error(sendErr)
 		return
 	}
-	m, err := Receive(test_qname)
+	m, receiveErr := Receive(test_qname)
+	if receiveErr != nil {
+		t.Error(receiveErr)
+		return
+	}
 	msg := m.(map[string]interface{})
 	for k, v := range msg {
 		fmt.Println(k, " -> ", reflect.TypeOf(v))
@@ -64,14 +68,14 @@ func TestSendRcv(t *testing.T) {
 		case string:
 			if k == "Name" {
 				if v != "Wednesday" {
-					t.Error(err)
+					t.Error(receiveErr)
 				}
 			}
 			fmt.Println(k, "is string", vv)
 		case float64:
 			if k == "Age" {
 				if v != 6.0 {
-					t.Error(err)
+					t.Error(receiveErr)
 				}
 			}
 			fmt.Println(k, "is float64", vv)
@@ -83,10 +87,6 @@ func TestSendRcv(t *testing.T) {
 		default:
 			fmt.Println(k, "is of a type I don't know how to handle", vv)
 		}
-	}
-	if err != nil {
-		t.Error(err)
-		return
 	}
 
 //	if string(msg) != `{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia"]}` {
