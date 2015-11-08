@@ -19,11 +19,25 @@ func TestParse(t *testing.T) {
 func main() {
 	wireHeader, _ := parseWireHeader(testInput)
 	fmt.Println(wireHeader)
-	
+	var headerTest = make(map[string]string)
+	headerTest["a"] = "this"
+	headerTest["hello"] = "goodbye"
+	retBytes,_ := createWireHeader(headerTest)
+	fmt.Println(string(retBytes))
 }
 
-func createWireHeader(map[string]string) ([]byte, error) {
-	ret := []byte("19:d=localhost")
+func createWireHeader(headerMap map[string]string) ([]byte, error) {
+//	ret := []byte("19:d=localhost")
+	ret := []byte("")
+	for key, value := range headerMap {
+//		byteKey := []byte(key)
+//		byteValue := []byte(value)
+//		fmt.Println(byteKey, byteValue)
+		ret = append(ret, key...)
+		ret = append(ret, "="...)
+		ret = append(ret, value...)
+		ret = append(ret, ","...)
+	}
 	return ret, nil
 }
 
