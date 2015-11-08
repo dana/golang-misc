@@ -104,7 +104,7 @@ func getQueue(qname string) (MessageQueue, error) {
 		//		Create:    false,
 		//		Exclusive: true,
 		//		Exclusive: false,
-		Perms: 0600,
+		Perms: 0666,
 	})
 	if false {
 		fmt.Println("two")
