@@ -191,6 +191,44 @@ func getQueue(qname string) (MessageQueue, error) {
 }
 
 
+func createWireHeader(headerMap map[string]string) ([]byte, error) {
+    headerBytes := []byte("")
+    for key, value := range headerMap {
+        headerBytes = append(headerBytes, key...)
+        headerBytes = append(headerBytes, "="...)
+        headerBytes = append(headerBytes, value...)
+        headerBytes = append(headerBytes, ","...)
+    }
+    if len(headerBytes) > 0 {
+        headerBytes = headerBytes[:len(headerBytes)-1]
+    }
+    ret := []byte(strconv.Itoa(len(headerBytes)))
+    ret = append(ret, ":"...)
+    ret = append(ret, headerBytes...)
+    return ret, nil
+}
+
+func parseWireHeader(testInput []byte) (map[string]string, error) {
+    var retMap = make(map[string]string)
+    testString := string(testInput)
+    fullHeaderParts := strings.SplitN(testString, ":", 2)
+    headerLength,atoiErr := strconv.Atoi(fullHeaderParts[0])
+    if atoiErr != nil {
+        return retMap, atoiErr
+    }
+    headerString := fullHeaderParts[1][0:headerLength]
+    headerParts := strings.Split(headerString, ",")
+    for _, part := range headerParts {
+        fields := strings.Split(part, "=")
+        key := fields[0]
+        value := fields[1]
+        retMap[key] = value
+    }
+    return retMap, nil
+}
+
+
+
 /*
 Sat Nov  7 18:09:43 PST 2015
 TODO:
@@ -212,4 +250,5 @@ Full example of message including header
 
 11:d=localhost{".ipc_transit_meta":{"destination":"localhost","ttl":9,"destination_qname":"test","send_ts":1447014248},"1":2}
 */
+
 
