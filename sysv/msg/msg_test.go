@@ -35,31 +35,9 @@ func TestSendRcv(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	msg, err := Receive(test_qname)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	if string(msg) != `{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia"]}` {
-		t.Error(string(msg))
-		return
-	}
-}
-
-func Receive(qname string) ([]byte, error) {
-	mq, err := getQueue(qname)
-	if err != nil {
-		return []byte(""), err
-	}
-	rawBytes, receiveErr := RawReceive(mq)
-	var f interface{}
-	jsonErr := json.Unmarshal(rawBytes, &f)
-	if jsonErr != nil {
-		return rawBytes, jsonErr
-	}
-	m := f.(map[string]interface{})
-	for k, v := range m {
+	m, err := Receive(test_qname)
+	msg := m.(map[string]interface{})
+	for k, v := range msg {
 		switch vv := v.(type) {
 		case string:
 			fmt.Println(k, "is string", vv)
@@ -74,8 +52,30 @@ func Receive(qname string) ([]byte, error) {
 			fmt.Println(k, "is of a type I don't know how to handle")
 		}
 	}
+	if err != nil {
+		t.Error(err)
+		return
+	}
 
-	return rawBytes, receiveErr
+//	if string(msg) != `{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia"]}` {
+//		t.Error(string(msg))
+//		return
+//	}
+}
+
+func Receive(qname string) (interface{}, error) {
+	mq, err := getQueue(qname)
+	if err != nil {
+		return []byte(""), err
+	}
+	rawBytes, receiveErr := RawReceive(mq)
+	var f interface{}
+	jsonErr := json.Unmarshal(rawBytes, &f)
+	if jsonErr != nil {
+		return rawBytes, jsonErr
+	}
+
+	return f, receiveErr
 }
 func RawReceive(queue MessageQueue) ([]byte, error) {
 	msg, _, err := queue.Receive(102400000, -1, nil)
