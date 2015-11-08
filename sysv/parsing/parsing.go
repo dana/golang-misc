@@ -22,14 +22,20 @@ func main() {
 }
 
 func parseWireHeader(testInput []byte) (map[string]string, error) {
-	var ret = make(map[string]string)
+	var retMap = make(map[string]string)
 	testString := string(testInput)
-	headerParts := strings.SplitN(testString, ":", 2)
-	headerLength,atoiErr := strconv.Atoi(headerParts[0])
+	fullHeaderParts := strings.SplitN(testString, ":", 2)
+	headerLength,atoiErr := strconv.Atoi(fullHeaderParts[0])
 	if atoiErr != nil {
-		return ret, atoiErr
+		return retMap, atoiErr
 	}
-	headerString := headerParts[1][0:headerLength]
-	fmt.Println(headerString)
-	return ret, nil
+	headerString := fullHeaderParts[1][0:headerLength]
+	headerParts := strings.Split(headerString, ",")
+	for _, part := range headerParts {
+		fields := strings.Split(part, "=")
+		key := fields[0]
+		value := fields[1]
+		retMap[key] = value
+	}
+	return retMap, nil
 }
