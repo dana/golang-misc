@@ -77,7 +77,6 @@ func TestSendRcv(t *testing.T) {
 				}
 			}
 			fmt.Println(k, "is float64", vv)
-//		case []interface{}:
 		case map[string]interface {}:
 			fmt.Println(k, "is an array:")
 			for i, u := range vv {
@@ -87,11 +86,6 @@ func TestSendRcv(t *testing.T) {
 			fmt.Println(k, "is of a type I don't know how to handle", vv)
 		}
 	}
-
-//	if string(msg) != `{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia"]}` {
-//		t.Error(string(msg))
-//		return
-//	}
 }
 
 func Receive(qname string) (interface{}, error) {
