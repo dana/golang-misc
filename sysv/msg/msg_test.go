@@ -71,7 +71,7 @@ func TestSendRcv(t *testing.T) {
 			fmt.Println(k, "is string", vv)
 		case float64:
 			if k == "Age" {
-				if v != 6.0 {
+				if v != 6.0 {  //very strange, even though it's an int in the json, it unmarshalled as a float
 					t.Error(receiveErr)
 				}
 			}
