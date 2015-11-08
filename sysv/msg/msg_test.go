@@ -51,9 +51,9 @@ func TestSendRcv(t *testing.T) {
 	}
 
 //	err := Send([]byte(`{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia","Foo"]}`), test_qname)
-	err := Send(jsonBytes, test_qname)
-	if err != nil {
-		t.Error(err)
+	sendErr := Send(jsonBytes, test_qname)
+	if sendErr != nil {
+		t.Error(sendErr)
 		return
 	}
 	m, err := Receive(test_qname)
