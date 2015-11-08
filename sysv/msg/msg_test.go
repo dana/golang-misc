@@ -2,9 +2,9 @@ package sysvipc
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"os"
-	"encoding/json"
 	"reflect"
 	"strconv"
 	"strings"
@@ -13,8 +13,7 @@ import (
 
 var test_qname string = "ipc-transit-test-queue"
 
-
-func Send(sendMessage map[string]interface {}, qname string) error {
+func Send(sendMessage map[string]interface{}, qname string) error {
 	mq, err := getQueue(qname)
 	if err != nil {
 		return err
@@ -37,15 +36,15 @@ func TestSendRcv(t *testing.T) {
 		os.Remove("/tmp/ipc_transit/" + test_qname)
 	}()
 
-// How to create this message: http://play.golang.org/p/13OSJHd5xe
-// Info about seemingly fully dynamic marshal/unmarshal: http://stackoverflow.com/questions/19482612/go-golang-array-type-inside-struct-missing-type-composite-literal
+	// How to create this message: http://play.golang.org/p/13OSJHd5xe
+	// Info about seemingly fully dynamic marshal/unmarshal: http://stackoverflow.com/questions/19482612/go-golang-array-type-inside-struct-missing-type-composite-literal
 	sendMessage := map[string]interface{}{
 		"Name": "Wednesday",
-		"Age": 6,
+		"Age":  6,
 		"Parents": map[string]interface{}{
 			"bee": "boo",
 			"foo": map[string]interface{}{
-				"hi": []string{"a","b"},
+				"hi": []string{"a", "b"},
 			},
 		},
 	}
@@ -77,7 +76,7 @@ func TestSendRcv(t *testing.T) {
 				}
 			}
 			fmt.Println(k, "is float64", vv)
-		case map[string]interface {}:
+		case map[string]interface{}:
 			fmt.Println(k, "is an array:")
 			for i, u := range vv {
 				fmt.Println(i, u)
