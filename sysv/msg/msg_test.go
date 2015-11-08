@@ -104,6 +104,8 @@ func makeNewQueue(qname string, queuePath string) error {
 			panic(err)
 		}
 	}()
+	fi.WriteString("qname=" + qname + "\n")
+//	key, ftokErr := Ftok(
 	return err
 }
 
