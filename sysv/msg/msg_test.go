@@ -13,12 +13,17 @@ import (
 
 var test_qname string = "foo"
 
-func Send(rawBytes []byte, qname string) error {
+
+func Send(sendMessage map[string]interface {}, qname string) error {
 	mq, err := getQueue(qname)
 	if err != nil {
 		return err
 	}
-	sendErr := RawSend(rawBytes, mq)
+	jsonBytes, marshalErr := json.Marshal(sendMessage)
+	if marshalErr != nil {
+		return marshalErr
+	}
+	sendErr := RawSend(jsonBytes, mq)
 	return sendErr
 }
 
@@ -44,14 +49,7 @@ func TestSendRcv(t *testing.T) {
 			},
 		},
 	}
-	jsonBytes, marshalErr := json.Marshal(sendMessage)
-	if marshalErr != nil {
-		t.Error(marshalErr)
-		return
-	}
-
-//	err := Send([]byte(`{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia","Foo"]}`), test_qname)
-	sendErr := Send(jsonBytes, test_qname)
+	sendErr := Send(sendMessage, test_qname)
 	if sendErr != nil {
 		t.Error(sendErr)
 		return
@@ -79,7 +77,8 @@ func TestSendRcv(t *testing.T) {
 				}
 			}
 			fmt.Println(k, "is float64", vv)
-		case []interface{}:
+//		case []interface{}:
+		case map[string]interface {}:
 			fmt.Println(k, "is an array:")
 			for i, u := range vv {
 				fmt.Println(i, u)
