@@ -14,8 +14,6 @@ import (
 var test_qname string = "ipc-transit-test-queue"
 var transitPath string = "/tmp/ipc_transit/"
 
-//func createWireHeader(headerMap map[string]string) ([]byte, error) {
-//        headerBytes = append(headerBytes, key...)
 func Send(sendMessage map[string]interface{}, qname string) error {
     var wireHeader = make(map[string]string)
 	wireHeader["q"] = qname
@@ -32,7 +30,6 @@ func Send(sendMessage map[string]interface{}, qname string) error {
 		return marshalErr
 	}
 	sendBytes = append(sendBytes, jsonBytes...)
-	//fmt.Println(string(sendBytes))
 	sendErr := RawSend(sendBytes, mq)
 	return sendErr
 }
@@ -98,7 +95,6 @@ func TestSendRcv(t *testing.T) {
 	}
 }
 
-//func parseWireHeader(testInput []byte) (map[string]string, []byte, error) {
 func Receive(qname string) (interface{}, error) {
 	var f interface{}
 	mq, err := getQueue(qname)
@@ -109,7 +105,6 @@ func Receive(qname string) (interface{}, error) {
 	if receiveErr != nil {
 		return nil, receiveErr
 	}
-	//fmt.Println("rawBytes = " + string(rawBytes))
 	wireHeader, payload, parseErr := parseWireHeader(rawBytes)
 	if _, ok := wireHeader["q"]; ok {
 		fmt.Println("recieved from q = " + wireHeader["q"])
@@ -174,7 +169,7 @@ func parseTransitFile(filePath string) (transitInfo, error) {
 func makeNewQueue(qname string, queuePath string) error {
 	fmt.Println("makeNewQueue: " + qname)
 	if _, statErr := os.Stat(transitPath); os.IsNotExist(statErr) {
-		//dir does not exisdt
+		//dir does not exist
 		mkdirErr := os.Mkdir(transitPath, 0777)
 		if mkdirErr != nil {
 			return mkdirErr
