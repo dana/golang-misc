@@ -263,6 +263,7 @@ TODO:
 Locking around the IPC Transit file manipulation
 Nonblocking flags
 Handle (and respect) the custom IPC::Transit header
+	basic creating and parsing is working
 Obviously turn this into a proper package
 Large message handling
 Remote transit
