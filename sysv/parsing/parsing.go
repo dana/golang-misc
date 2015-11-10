@@ -17,8 +17,9 @@ func TestParse(t *testing.T) {
 }
 
 func main() {
-	wireHeader, _ := parseWireHeader(testInput)
+	wireHeader, payload, _ := parseWireHeader(testInput)
 	fmt.Println(wireHeader)
+	fmt.Println(string(payload))
 	var headerTest = make(map[string]string)
 	headerTest["a"] = "this"
 	headerTest["hello"] = "goodbye"
@@ -43,15 +44,16 @@ func createWireHeader(headerMap map[string]string) ([]byte, error) {
 	return ret, nil
 }
 
-func parseWireHeader(testInput []byte) (map[string]string, error) {
+func parseWireHeader(testInput []byte) (map[string]string, []byte, error) {
 	var retMap = make(map[string]string)
 	testString := string(testInput)
 	fullHeaderParts := strings.SplitN(testString, ":", 2)
 	headerLength,atoiErr := strconv.Atoi(fullHeaderParts[0])
 	if atoiErr != nil {
-		return retMap, atoiErr
+		return retMap, nil, atoiErr
 	}
 	headerString := fullHeaderParts[1][0:headerLength]
+	payload := testInput[len(fullHeaderParts[0])+headerLength+1:]
 	headerParts := strings.Split(headerString, ",")
 	for _, part := range headerParts {
 		fields := strings.Split(part, "=")
@@ -59,5 +61,5 @@ func parseWireHeader(testInput []byte) (map[string]string, error) {
 		value := fields[1]
 		retMap[key] = value
 	}
-	return retMap, nil
+	return retMap, payload, nil
 }
