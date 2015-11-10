@@ -14,7 +14,15 @@ import (
 var test_qname string = "ipc-transit-test-queue"
 var transitPath string = "/tmp/ipc_transit/"
 
+//func createWireHeader(headerMap map[string]string) ([]byte, error) {
+//        headerBytes = append(headerBytes, key...)
 func Send(sendMessage map[string]interface{}, qname string) error {
+    var wireHeader = make(map[string]string)
+	wireHeader["qname"] = qname
+	sendBytes, createWireHeaderErr := createWireHeader(wireHeader)
+	if createWireHeaderErr != nil {
+		return createWireHeaderErr
+	}
 	mq, err := getQueue(qname)
 	if err != nil {
 		return err
@@ -23,7 +31,9 @@ func Send(sendMessage map[string]interface{}, qname string) error {
 	if marshalErr != nil {
 		return marshalErr
 	}
-	sendErr := RawSend(jsonBytes, mq)
+	sendBytes = append(sendBytes, jsonBytes...)
+	fmt.Println(string(sendBytes))
+	sendErr := RawSend(sendBytes, mq)
 	return sendErr
 }
 
@@ -88,14 +98,23 @@ func TestSendRcv(t *testing.T) {
 	}
 }
 
+//func parseWireHeader(testInput []byte) (map[string]string, []byte, error) {
 func Receive(qname string) (interface{}, error) {
 	var f interface{}
 	mq, err := getQueue(qname)
 	if err != nil {
-		return f, err
+		return nil, err
 	}
 	rawBytes, receiveErr := RawReceive(mq)
-	jsonErr := json.Unmarshal(rawBytes, &f)
+	if receiveErr != nil {
+		return nil, receiveErr
+	}
+	wireHeader, payload, parseErr := parseWireHeader(rawBytes)
+	fmt.Println("recieved from qname = " + wireHeader["qname"])
+	if parseErr != nil {
+		return nil, parseErr
+	}
+	jsonErr := json.Unmarshal(payload, &f)
 	if jsonErr != nil {
 		return f, jsonErr
 	}
@@ -216,15 +235,16 @@ func createWireHeader(headerMap map[string]string) ([]byte, error) {
     return ret, nil
 }
 
-func parseWireHeader(testInput []byte) (map[string]string, error) {
+func parseWireHeader(testInput []byte) (map[string]string, []byte, error) {
     var retMap = make(map[string]string)
     testString := string(testInput)
     fullHeaderParts := strings.SplitN(testString, ":", 2)
     headerLength,atoiErr := strconv.Atoi(fullHeaderParts[0])
     if atoiErr != nil {
-        return retMap, atoiErr
+        return retMap, nil, atoiErr
     }
     headerString := fullHeaderParts[1][0:headerLength]
+    payload := testInput[len(fullHeaderParts[0])+headerLength+1:]
     headerParts := strings.Split(headerString, ",")
     for _, part := range headerParts {
         fields := strings.Split(part, "=")
@@ -232,9 +252,8 @@ func parseWireHeader(testInput []byte) (map[string]string, error) {
         value := fields[1]
         retMap[key] = value
     }
-    return retMap, nil
+    return retMap, payload, nil
 }
-
 
 
 /*
