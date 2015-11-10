@@ -18,7 +18,7 @@ var transitPath string = "/tmp/ipc_transit/"
 //        headerBytes = append(headerBytes, key...)
 func Send(sendMessage map[string]interface{}, qname string) error {
     var wireHeader = make(map[string]string)
-	wireHeader["qname"] = qname
+	wireHeader["q"] = qname
 	sendBytes, createWireHeaderErr := createWireHeader(wireHeader)
 	if createWireHeaderErr != nil {
 		return createWireHeaderErr
@@ -32,7 +32,7 @@ func Send(sendMessage map[string]interface{}, qname string) error {
 		return marshalErr
 	}
 	sendBytes = append(sendBytes, jsonBytes...)
-	fmt.Println(string(sendBytes))
+	//fmt.Println(string(sendBytes))
 	sendErr := RawSend(sendBytes, mq)
 	return sendErr
 }
@@ -109,12 +109,16 @@ func Receive(qname string) (interface{}, error) {
 	if receiveErr != nil {
 		return nil, receiveErr
 	}
+	//fmt.Println("rawBytes = " + string(rawBytes))
 	wireHeader, payload, parseErr := parseWireHeader(rawBytes)
-	fmt.Println("recieved from qname = " + wireHeader["qname"])
+	if _, ok := wireHeader["q"]; ok {
+		fmt.Println("recieved from q = " + wireHeader["q"])
+	}
 	if parseErr != nil {
 		return nil, parseErr
 	}
 	jsonErr := json.Unmarshal(payload, &f)
+	fmt.Println(f)
 	if jsonErr != nil {
 		return f, jsonErr
 	}
@@ -247,10 +251,12 @@ func parseWireHeader(testInput []byte) (map[string]string, []byte, error) {
     payload := testInput[len(fullHeaderParts[0])+headerLength+1:]
     headerParts := strings.Split(headerString, ",")
     for _, part := range headerParts {
-        fields := strings.Split(part, "=")
-        key := fields[0]
-        value := fields[1]
-        retMap[key] = value
+		if len(part) > 0 {
+        	fields := strings.Split(part, "=")
+        	key := fields[0]
+        	value := fields[1]
+        	retMap[key] = value
+		}
     }
     return retMap, payload, nil
 }
