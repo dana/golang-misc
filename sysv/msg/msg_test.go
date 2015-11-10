@@ -12,6 +12,7 @@ import (
 )
 
 var test_qname string = "ipc-transit-test-queue"
+var transitPath string = "/tmp/ipc_transit/"
 
 func Send(sendMessage map[string]interface{}, qname string) error {
 	mq, err := getQueue(qname)
@@ -33,7 +34,7 @@ func RawSend(rawBytes []byte, queue MessageQueue) error {
 
 func TestSendRcv(t *testing.T) {
 	defer func() {
-		os.Remove("/tmp/ipc_transit/" + test_qname)
+		os.Remove(transitPath + test_qname)
 	}()
 
 	// How to create this message: http://play.golang.org/p/13OSJHd5xe
@@ -149,6 +150,13 @@ func parseTransitFile(filePath string) (transitInfo, error) {
 
 func makeNewQueue(qname string, queuePath string) error {
 	fmt.Println("makeNewQueue: " + qname)
+	if _, statErr := os.Stat(transitPath); os.IsNotExist(statErr) {
+		//dir does not exisdt
+		mkdirErr := os.Mkdir(transitPath, 0777)
+		if mkdirErr != nil {
+			return mkdirErr
+		}
+	}
 	fi, err := os.Create(queuePath)
 	if err != nil {
 		return err
@@ -165,7 +173,7 @@ func makeNewQueue(qname string, queuePath string) error {
 }
 
 func getQueue(qname string) (MessageQueue, error) {
-	transitInfoFilePath := "/tmp/ipc_transit/" + qname
+	transitInfoFilePath := transitPath + qname
 	if _, statErr := os.Stat(transitInfoFilePath); os.IsNotExist(statErr) {
 		makeErr := makeNewQueue(qname, transitInfoFilePath)
 		if makeErr != nil {
